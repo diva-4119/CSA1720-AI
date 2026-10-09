@@ -1,0 +1,70 @@
+import heapq
+
+def manhattan(state, goal):
+    distance = 0
+    for i in range(9):
+        if state[i] != 0:
+            j = goal.index(state[i])
+            distance += abs(i // 3 - j // 3)
+            distance += abs(i % 3 - j % 3)
+    return distance
+
+def get_neighbors(state):
+    neighbors = []
+    zero = state.index(0)
+    row, col = zero // 3, zero % 3
+
+    moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    for dr, dc in moves:
+        nr, nc = row + dr, col + dc
+
+        if 0 <= nr < 3 and 0 <= nc < 3:
+            new_state = list(state)
+            new_zero = nr * 3 + nc
+            new_state[zero], new_state[new_zero] = \
+                new_state[new_zero], new_state[zero]
+            neighbors.append(tuple(new_state))
+
+    return neighbors
+
+def solve(start, goal):
+    pq = []
+    heapq.heappush(pq, (manhattan(start, goal), 0, start, []))
+    visited = set()
+
+    while pq:
+        f, g, state, path = heapq.heappop(pq)
+
+        if state in visited:
+            continue
+
+        visited.add(state)
+        path = path + [state]
+
+        if state == goal:
+            return path
+
+        for neighbor in get_neighbors(state):
+            if neighbor not in visited:
+                h = manhattan(neighbor, goal)
+                heapq.heappush(pq, (g + 1 + h, g + 1,
+                                    neighbor, path))
+
+    return None
+
+start = (1, 2, 3,
+         4, 0, 6,
+         7, 5, 8)
+
+goal = (1, 2, 3,
+        4, 5, 6,
+        7, 8, 0)
+
+solution = solve(start, goal)
+
+print("Solution:")
+for state in solution:
+    for i in range(0, 9, 3):
+        print(state[i:i+3])
+    print()
