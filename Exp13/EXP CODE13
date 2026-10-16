@@ -1,0 +1,28 @@
+def minimax(depth, node, maximizing, scores, max_depth):
+    if depth == max_depth:
+        return scores[node]
+
+    if maximizing:
+        return max(
+            minimax(depth + 1, node * 2, False,
+                    scores, max_depth),
+            minimax(depth + 1, node * 2 + 1, False,
+                    scores, max_depth)
+        )
+
+    else:
+        return min(
+            minimax(depth + 1, node * 2, True,
+                    scores, max_depth),
+            minimax(depth + 1, node * 2 + 1, True,
+                    scores, max_depth)
+        )
+
+
+scores = [3, 5, 2, 9, 12, 5, 23, 23]
+max_depth = 3
+
+best_score = minimax(0, 0, True, scores, max_depth)
+
+print("Leaf Scores:", scores)
+print("Optimal Score:", best_score)
